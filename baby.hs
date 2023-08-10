@@ -132,3 +132,25 @@ describeList xs = "This list is " ++ case xs of (x:[]) -> "is single list of [" 
                                                 (x:y:[]) -> "is double list of [" ++ show x ++ ", " ++ show y ++ "]"
                                                 [] -> "empty!"
                                                 (x:y:_) -> "many!"
+
+-- 再帰
+fib :: Integer -> Integer
+fib x
+  | x < 0 = error "x < -1 is undefined!"
+  | x == 0 = 0
+  | x == 1 = 1
+  | otherwise = fib (x - 2) + fib (x - 1)
+
+maximum' :: (Ord a) => [a] -> a
+maximum' [] = error "can not maximum empty list!"
+maximum' (x:[]) = x
+maximum' (x:xs) = max x (maximum' xs)
+
+reverse' :: [a] -> [a]
+reverse' [] = []
+reverse' (x:[]) = [x]
+reverse' (x:xs) = (reverse' xs) ++ [x]
+
+quicksort :: (Ord a) => [a] -> [a]
+quicksort [] = []
+quicksort (x:xs) = (quicksort [e | e <- xs, e <= x]) ++ [x] ++ (quicksort [e | e <- xs, e > x])
