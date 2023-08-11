@@ -35,6 +35,14 @@ findKey key ((k, v):xs)
 findKey' :: (Eq k) => k -> [(k, v)] -> Maybe v
 findKey' key kv = foldr (\(k, v) acc -> if k == key then Just v else acc) Nothing kv
 
+type PhoneBook = [(String, String)]
+type PhoneNumber = String
+type Name = String
+type PhoneBook = [(Name, PhoneNumber)]
+
+inPhoneBook :: Name -> PhoneNumber -> PhoneBook -> Bool
+inPhoneBook name pnumber pbook = (name, pnumber) `elem` pbook
+
 phoneBook =
   [
     ("betty", "555-2938"),
