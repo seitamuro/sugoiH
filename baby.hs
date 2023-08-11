@@ -154,3 +154,80 @@ reverse' (x:xs) = (reverse' xs) ++ [x]
 quicksort :: (Ord a) => [a] -> [a]
 quicksort [] = []
 quicksort (x:xs) = (quicksort [e | e <- xs, e <= x]) ++ [x] ++ (quicksort [e | e <- xs, e > x])
+
+-- 高階関数
+zipWith' :: (a -> b -> c) -> [a] -> [b] -> [c]
+zipWith' _ [] _ = []
+zipWith' _ _ [] = []
+zipWith' f (x:xs) (y:ys) = f x y : zipWith' f xs ys
+
+flip' :: (a -> b -> c) -> (b -> a -> c)
+flip' f = f'
+  where f' b a = f a b
+
+flip'' :: (a -> b -> c) -> (b -> a -> c)
+flip'' f x y = f y x
+
+max'' :: (Ord a) => a -> a -> a
+max'' x y
+  | x >= y = x
+  | otherwise = y
+
+myCollatz :: Integer -> [Integer]
+myCollatz 1 = []
+myCollatz x
+  | even x = (x `div` 2) : myCollatz (x `div` 2)
+  | odd x = (3 * x + 1) : myCollatz (3 * x + 1)
+
+maximumWithIndex :: (Ord a) => [a] -> (a, Int)
+maximumWithIndex [] = error "empty list!"
+maximumWithIndex (x:[]) = (x, 0)
+maximumWithIndex (x:xs)
+  | x > y = (x, i)
+  | x <= y = (y, i)
+  where
+    res = maximumWithIndex xs
+    y = fst res
+    i = snd res + 1
+
+numLongCollatz :: Int
+numLongCollatz = length (filter (\xs -> length xs > 15)
+                                (map myCollatz [1..100]))
+
+sum' :: (Num a) => [a] -> a -- ラムダ式の使い方
+sum' xs = foldl (\acc x -> x + acc) 0 xs
+
+sum'' :: (Num a) => [a] -> a
+sum'' = foldl (+) 0
+
+sum''' :: (Num a) => [a] -> a
+sum''' = foldr (+) 0
+
+map' :: (a -> b) -> [a] -> [b] -- 右畳み込みであれば無限リストに対応できる、:を使えるので高速などのメリットがある
+map' f xs = foldr (\x acc -> (f x) : acc) [] xs
+
+map'' :: (a -> b) -> [a] -> [b]
+map'' f xs = foldl (\acc x -> acc ++ [f x]) [] xs
+
+maximum'' :: (Ord a) => [a] -> a -- foldl1とfoldr1はアキュムレーターの初期値をそれぞれ、リストの最初、最後の値とする
+maximum'' xs = foldr1 (\x acc -> if x > acc then x else acc) xs
+
+shortSumFilter = sum $ filter (> 10) $ map (*2) [1..100] -- 関数適用演算子
+addArgThree = map ($ 3) [(*2), (^2), sqrt]
+
+threeTimesWithNeg :: (Num a) => a -> a
+threeTimesWithNeg x = (negate . (*3)) x -- 関数合成
+smartCase = replicate 2 . product . map (*3) $ zipWith max [1, 2] [4, 5]
+
+sum'''' :: (Num a) => [a] -> a -- ポイントフリースタイル
+sum'''' = foldr1 (+)
+
+fn :: Double -> Integer
+fn = ceiling . negate . tan . cos . max 5
+
+oddSquareSum :: Integer
+oddSquareSum = (sum . underLessThan1000 . oddFilter . squared) [1..]
+  where
+    squared  = map (^2)
+    oddFilter = filter odd
+    underLessThan1000 = takeWhile (<10000)
